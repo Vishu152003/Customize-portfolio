@@ -644,7 +644,14 @@ box-shadow:
   display: flex;
   align-items: center;
   }
-  
+  .heading1{
+  font-size: var(--font-size,36px);
+  font-weight: 700;
+  color:#00d4ff;
+   text-shadow: none;
+   text-align: center;
+   font-size: 3rem;
+  }
 .gradient {
   font-size: 35px;
   background: linear-gradient(90deg, #007CF0, #00DFD8);
@@ -1430,7 +1437,18 @@ padding: 12px;
             /* color: #007CF0; */
 
         }
-
+        .space{
+         display: flex; 
+         justify-content:space-between;
+         align-items: center;
+         gap:110px;
+        }
+        .space1{
+          display: flex; 
+         justify-content:space-between;
+         align-items: center;
+         gap:145px;
+        }
         .slider-container {
             display: flex;
             align-items: center;
@@ -2373,13 +2391,19 @@ body h1, body h2, body h3, body p, body span {
       
         justify-content: space-evenly;
         width: 5% !important;
+        padding-right: 40px !important;
+        display: flex;
+        gap:20px;
         
     }
     
     .menu h2 {
         font-size: var("--font-size,20px");
-        /* margin-left: 5px; */
-        margin-top: 45px;
+        
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
     }
     
     .navlinks {
@@ -2409,7 +2433,13 @@ body h1, body h2, body h3, body p, body span {
         cursor: pointer;
         padding-top: 15px;
     }
-    
+    .button{
+      width:55px;
+      height: 45px;
+    }
+    .button-inner{
+      font-size:20px ;
+    }
     /* Hero Section */
     .social-login-icons {
         display: none;
@@ -2492,7 +2522,11 @@ body h1, body h2, body h3, body p, body span {
     .skills-section {
         flex-direction: column;
         width: 95%;
-        gap: 20px;
+        gap: 20px;  
+    }
+
+    .heading1{
+      padding-top: 80px;
     }
     
     .skills-section img {
@@ -2660,7 +2694,7 @@ body h1, body h2, body h3, body p, body span {
     
     /* Dashboard */
     .dashboard {
-        width: 50%;
+        width: 60%;
         padding: 10px;
     }
     
@@ -2674,10 +2708,29 @@ body h1, body h2, body h3, body p, body span {
     .section-title {
         font-size: 16px;
     }
-    
+    .color-palette-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    padding: 5px;
+}
+
     .theme-btn, .font-selector {
         font-size: 14px;
         padding: 8px;
+    }
+    
+    .space{
+      display: flex; 
+         justify-content:space-between;
+         align-items: center;
+         gap:75px;
+    }
+    .space1{
+      display: flex; 
+         justify-content:space-between;
+         align-items: center;
+         gap:82px;
     }
     
     .slider-container {
