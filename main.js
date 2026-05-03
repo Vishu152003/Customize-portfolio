@@ -1,1027 +1,1026 @@
-// Mobile menu toggle
-const menuIcon = document.querySelector('.bars');
-const navLinks = document.querySelector('.navlinks');
-
-menuIcon.addEventListener('click', () => {
-    navLinks.classList.toggle('active');
+// === INITIALIZATION ===
+document.addEventListener('DOMContentLoaded', () => {
+    initThreeJSBackground();
+    initScrollEffects();
+    initTypingEffect();
+    initNavigation();
+    initThemeToggle();
+    initDashboard();
+    initSkillsCarousel();
+    initAchievements();
+    initContactForm();
 });
 
-// Close menu when clicking on a link
-document.querySelectorAll('.navlinks a').forEach(link => {
-    link.addEventListener('click', () => {
-        navLinks.classList.remove('active');
+// === THREE.JS ANIMATED BACKGROUND ===
+function initThreeJSBackground() {
+    const canvas = document.getElementById('bg-canvas');
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+    const particlesGeometry = new THREE.BufferGeometry();
+    const count = 1200;
+    const posArray = new Float32Array(count * 3);
+    for(let i = 0; i < count * 3; i++) { posArray[i] = (Math.random() - 0.5) * 15; }
+    particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+    const particlesMaterial = new THREE.PointsMaterial({ size: 0.02, color: 0x00d4ff, transparent: true, opacity: 0.8 });
+    const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+    scene.add(particlesMesh);
+
+    const lineGeometry = new THREE.BufferGeometry();
+    const linePoints = [];
+    for(let i = -10; i < 10; i++) { linePoints.push(new THREE.Vector3(-10, -5, i), new THREE.Vector3(10, -5, i)); }
+    lineGeometry.setFromPoints(linePoints);
+    const lineMaterial = new THREE.LineBasicMaterial({ color: 0x00d4ff, transparent: true, opacity: 0.1 });
+    const lines = new THREE.LineSegments(lineGeometry, lineMaterial);
+    scene.add(lines);
+
+    camera.position.z = 5;
+
+    const animate = () => {
+        requestAnimationFrame(animate);
+        particlesMesh.rotation.y += 0.001;
+        particlesMesh.rotation.x += 0.0005;
+        lines.rotation.y += 0.001;
+        renderer.render(scene, camera);
+    };
+    animate();
+
+    window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
     });
-});
+}
 
+// === SCROLL REVEAL & GSAP ===
+function initScrollEffects() {
+    const sr = ScrollReveal({ origin: 'bottom', distance: '60px', duration: 1000, delay: 200 });
+    sr.reveal('.reveal-up, .reveal-left, .reveal-right', { interval: 100, reset: false });
+    sr.reveal('.reveal-left', { origin: 'left' });
+    sr.reveal('.reveal-right', { origin: 'right' });
 
-const typed = new Typed('.multiple-text',{
-    strings:['Frontened developer', 'web developer'],
-    typeSpeed:110,
-    backSpeed:110,
-    backDelay:1000,
-    loop:true
-
-});
-
-var swiper = new Swiper(".mySwiper", {
-      effect: "coverflow",
-      grabCursor: true,
-      centeredSlides: true,
-      loop:true,
-      spaceBetween: 20,
-      slidesPerView: "auto",
-      
-      coverflowEffect: {
-        rotate: 50,
-        stretch: 0,
-        depth: 150,
-        modifier: 2.5,
-        slideShadows: true,
-      },
-      // pagination: {
-      //   el: ".swiper-pagination",
-      // },
-      autoplay: {
-        delay:1000,
-        disableOnInteraction:false,
-
-      },
-      speed:800,
-      
+    window.addEventListener('scroll', () => {
+        const nav = document.getElementById('navbar');
+        nav.classList.toggle('scrolled', window.scrollY > 50);
     });
+}
 
-
-    particlesJS("particles-js", {
-      "particles": {
-        "number": { "value": 60, "density": { "enable": true, "value_area": 800 } },
-        "color": { "value": "#00d4ff" },
-        "shape": { "type": "circle" },
-        "opacity": { "value": 0.45 },
-        "size": { "value": 3, "random": true },
-        "line_linked": { "enable": true, "distance": 140, "color": "#00d4ff", "opacity": 0.25, "width": 1 },
-        "move": { "enable": true, "speed": 2.5, "out_mode": "out" }
-      },
-      "interactivity": {
-        "detect_on": "canvas",
-        "events": {
-          "onhover": { "enable": true, "mode": "grab" },
-          "onclick": { "enable": true, "mode": "push" },
-          "resize": true
-        },
-        "modes": {
-          "grab": { "distance": 180, "line_linked": { "opacity": 0.6 } },
-          "push": { "particles_nb": 4 }
-        }
-      },
-      "retina_detect": true
+// === TYPING EFFECT ===
+function initTypingEffect() {
+    new Typed('.typed-text', {
+        strings: ['Frontend Developer', 'Web Developer'],
+        typeSpeed: 100, backSpeed: 100, loop: true
     });
+}
 
-const openBtn = document.getElementById('open');
-const dashboard = document.getElementById('dashboard');
-const closeDashboard = document.getElementById('closeDashboard');      
-document.querySelectorAll(".arrow-icon").forEach(arrow => {
-  const section = arrow.closest(".section");
-  arrow.addEventListener("click", () => {
-    section.classList.toggle("open");
-  });
-});
+// === NAVIGATION ===
+function initNavigation() {
+    const hamburger = document.getElementById('hamburger');
+    const navLinks = document.querySelector('.nav-links');
+    hamburger.addEventListener('click', () => navLinks.classList.toggle('active'));
+    document.querySelectorAll('.nav-links a').forEach(link => {
+        link.addEventListener('click', () => navLinks.classList.remove('active'));
+    });
+}
 
+// === THEME TOGGLE ===
+function initThemeToggle() {
+    const btn = document.getElementById('theme-toggle');
+    const icon = btn.querySelector('i');
+    btn.addEventListener('click', () => {
+        document.body.classList.toggle('light-mode');
+        const isLight = document.body.classList.contains('light-mode');
+        icon.className = isLight ? 'fas fa-sun' : 'fas fa-moon';
+        document.body.style.background = isLight ? '#f8fafc' : '#0b0f19';
+        document.body.style.backgroundImage = 'none';
+        localStorage.setItem('theme', isLight ? 'light' : 'dark');
+    });
+    if (localStorage.getItem('theme') === 'light') {
+        document.body.classList.add('light-mode');
+        icon.className = 'fas fa-sun';
+        document.body.style.background = '#f8fafc';
+    }
+}
 
-        openBtn.addEventListener('click', () => {
-            dashboard.classList.add('open');
-            dashboard.style.display="block";
+// === DASHBOARD ===
+function initDashboard() {
+    const openBtn = document.getElementById('open-dashboard');
+    const closeBtn = document.getElementById('closeDashboard');
+    const dash = document.getElementById('dashboard');
+    
+    openBtn.addEventListener('click', () => dash.classList.add('open'));
+    closeBtn.addEventListener('click', () => dash.classList.remove('open'));
+
+    // Arrow toggles
+    document.querySelectorAll(".arrow-icon").forEach(arrow => {
+        const section = arrow.closest(".section");
+        arrow.addEventListener("click", (e) => {
+            e.stopPropagation();
+            section.classList.toggle("open");
         });
-        
-        closeDashboard.addEventListener('click', () => {
-            dashboard.classList.remove('closeDashboard');
-            dashboard.style.display="none";
-            
-        });
+    });
 
-       
-        // Theme Switcher
-        
-        
-     const lightThemeBtn = document.getElementById('lightThemeBtn');
-     const darkThemeBtn = document.getElementById('darkThemeBtn');
+    // Theme Switcher
+    const lightThemeBtn = document.getElementById('lightThemeBtn');
+    const darkThemeBtn = document.getElementById('darkThemeBtn');
 
     lightThemeBtn.addEventListener('click', () => {
-    document.body.classList.add('light');
-    lightThemeBtn.classList.add('active');
-    darkThemeBtn.classList.remove('active');
-
-    // Update button icon
-    const buttonIcons = openBtn.querySelectorAll('i');
-    buttonIcons.forEach(icon => {
-        icon.className = 'fa-solid fa-moon';
+        document.body.classList.add('light-mode');
+        lightThemeBtn.classList.add('active');
+        darkThemeBtn.classList.remove('active');
+        document.body.style.background = '#f8fafc';
+        document.body.style.backgroundImage = 'none';
+        localStorage.setItem('theme', 'light');
     });
-    
-    // Set particle container background to white
-    document.getElementById('particles-js').style.backgroundColor = '#ffffff';
-  
-    document.getElementById('particles-js').style.backgroundImage = 'none';
-    
-    localStorage.setItem('theme', 'light');
-});
-//dark theme
+
     darkThemeBtn.addEventListener('click', () => {
-    document.body.classList.remove('light');  
-    darkThemeBtn.classList.add('active');
-    lightThemeBtn.classList.remove('active');
-  
-    
-    // Update button icon
-    const buttonIcons = openBtn.querySelectorAll('i');
-    buttonIcons.forEach(icon => {
-        icon.className = 'fa-solid fa-sun';
-    });
-    
-    // Set particle container background to dark
-    document.getElementById('particles-js').style.backgroundColor = '#11121a';
-    document.getElementById('particles-js').style.backgroundImage = 'none';
-    localStorage.setItem('theme', 'dark');
-});
-
-// Load saved theme
-if (localStorage.getItem('theme') === 'light') {
-    document.body.classList.add('light');
-    lightThemeBtn.classList.add('active');
-    darkThemeBtn.classList.remove('active');
-    
-    // Update button icon
-    const buttonIcons = openBtn.querySelectorAll('i');
-    buttonIcons.forEach(icon => {
-        icon.className = 'fa-solid fa-moon';
-    });
-    
-    // Set particle container background to white
-    document.getElementById('particles-js').style.backgroundColor = '#ffffff';
-
-    document.getElementById('particles-js').style.backgroundImage = 'none';
-} else {
-    // Default to dark theme
-    document.body.classList.remove('light');
-    darkThemeBtn.classList.add('active');
-    lightThemeBtn.classList.remove('active');
-    
-    // Update button icon
-    const buttonIcons = openBtn.querySelectorAll('i');
-    buttonIcons.forEach(icon => {
-        icon.className = 'fa-solid fa-sun';
-    });
-    
-    // Set particle container background to dark
-    document.getElementById('particles-js').style.backgroundColor = '#11121a';
-    document.getElementById('particles-js').style.backgroundImage = 'none';
-}
-
-
-// typography
-
-const fontsize=document.getElementById('fontSizeSlider');
-const fontValue=document.getElementById('fontSizeValue');
-const fontfamily=document.getElementById('fontFamilySelector');
-const resetBtn=document.getElementById('resetFontBtn')
-
-fontsize.addEventListener('input' , ()=>{
-  const size=fontsize.value + 'px';
-  document.documentElement.style.setProperty('--font-size',size);
-  fontValue.textContent = size;
-       localStorage.setItem('fontSize', size);
-
-});
-
-fontfamily.addEventListener('change',()=>{
-  const font=fontfamily.value;
-  document.documentElement.style.setProperty('--font-family',font);
-  localStorage.setItem('fontfamily',font);
-
-})
-
-const savedFontsize=localStorage.getItem('fontSize');
-const savedFontfamily=localStorage.getItem('fontfamily');
-if(savedFontsize){
-   document.documentElement.style.setProperty('--font-size',savedFontsize);
-  fontValue.textContent=savedFontsize;
-  fontsize.value=parseInt(savedFontsize);
-}
-
-if(savedFontfamily){
-  document.documentElement.style.setProperty('--font-family',savedFontfamily);
-  fontfamily.value=savedFontfamily;
-  
-}
-
-resetBtn.addEventListener('click', () => {
-  // Remove CSS variables → fallback values apply automatically
-  document.documentElement.style.removeProperty('--font-size');
-  document.documentElement.style.removeProperty('--font-family');
-
-  // Reset display values
-  fontsize.value = 16; // your slider base value
-  fontValue.textContent = '16px';
-  fontfamily.value = "'Poppins', sans-serif";
-
-  // Clear localStorage
-  localStorage.removeItem('fontSize');
-  localStorage.removeItem('fontfamily');
-});
-
-// Color Palette Selector
-document.addEventListener("DOMContentLoaded", () => {
-  const colorPaletteData = [
-    { colors: ['#FF6B6B', '#FFE66D','#FFD700'], icon: null },
-    { colors: ['#4ECDC4', '#1A535C'], icon: null },
-    { colors: ['#FF9F1C', '#2EC4B6'], icon: null },
-    { colors: ['#E71D36', '#FF9F1C'], icon: null },
-    { colors: ['#6A0572', '#AB83A1'], icon: null },
-    { colors: ['#2E86AB', '#A23B72'], icon: null },
-    { colors: ['#F18F01', '#C73E1D'], icon: null },
-    { colors: ['#5E60CE', '#5390D9'], icon: null },
-    { colors: ['#4CC9F0', '#4361EE'], icon: null },
-    { colors: ['#8B4513', '#D2B48C'], icon: 'check' },
-    { colors: ['#F72585', '#7209B7'], icon: null },
-    { colors: ['#3A0CA3', '#4361EE'], icon: null },
-    { colors: ['#F94144', '#F3722C'], icon: null },
-    { colors: ['#F8961E', '#F9844A'], icon: null },
-    { colors: ['#90BE6D', '#43AA8B'], icon: null },
-    { colors: ['#FFA500', '#FFA500'], icon: 'pen' }
-  ];
-
-  const colorPaletteGrid = document.getElementById('colorPaletteGrid');
-  if (!colorPaletteGrid) return; // guard if element missing
-
-  // Dashboard defaults (prevent dashboard inheriting global vars)
-  const DASHBOARD_DEFAULT_ACCENT = '#00d4ff';
-  const DASHBOARD_DEFAULT_TEXT = '#ffffff';
-  const dashboardEl = document.getElementById('dashboard');
-
-  // small helpers
-  const hexToRgb = (hex) => {
-    const h = hex.replace('#','');
-    const bigint = parseInt(h.length === 3 ? h.split('').map(c=>c+c).join('') : h, 16);
-    return { r: (bigint >> 16) & 255, g: (bigint >> 8) & 255, b: bigint & 255 };
-  };
-  const luminance = (r,g,b) => {
-    // relative luminance 0..1
-    const a = [r,g,b].map(v => {
-      v /= 255;
-      return v <= 0.03928 ? v/12.92 : Math.pow((v+0.055)/1.055, 2.4);
-    });
-    return 0.2126*a[0] + 0.7152*a[1] + 0.0722*a[2];
-  };
-
-  // ensure dashboard has its own local CSS vars initially
-  if (dashboardEl) {
-    dashboardEl.style.setProperty('--accent-color', DASHBOARD_DEFAULT_ACCENT);
-    dashboardEl.style.setProperty('--text-color', DASHBOARD_DEFAULT_TEXT);
-    dashboardEl.style.color = DASHBOARD_DEFAULT_TEXT;
-  }
-
-  colorPaletteData.forEach((item, index) => {
-    const circle = document.createElement('div');
-    circle.classList.add('color-circle');
-
-    const top = document.createElement('div');
-    top.classList.add('color-split', 'top');
-    top.style.backgroundColor = item.colors[0];
-
-    const bottom = document.createElement('div');
-    bottom.classList.add('color-split', 'bottom');
-    bottom.style.backgroundColor = item.colors[1] || item.colors[0];
-
-    circle.appendChild(top);
-    circle.appendChild(bottom);
-
-    if (item.icon) {
-      const icon = document.createElement('i');
-      icon.className = `color-icon fas fa-${item.icon}`;
-      circle.appendChild(icon);
-    }
-
-    circle.addEventListener('click', () => {
-      // active state
-      document.querySelectorAll('.color-circle').forEach(c => c.classList.remove('active'));
-      circle.classList.add('active');
-
-      // apply visual background (gradient) and CSS vars
-      const topColor = item.colors[0];
-      const bottomColor = item.colors[1] || item.colors[0];
-      document.body.style.background = `linear-gradient(135deg, ${topColor}, ${bottomColor})`;
-
-      // ensure particles container doesn't override background
-      const particles = document.getElementById('particles-js');
-      if (particles) { particles.style.background = 'transparent'; particles.style.backgroundImage = 'none'; }
-
-      // set global accent and text color CSS vars
-      document.documentElement.style.setProperty('--accent-color', topColor);
-      const rgb = hexToRgb(topColor);
-      const lum = luminance(rgb.r, rgb.g, rgb.b);
-      const textColor = lum > 0.5 ? '#111' : '#ffffff';
-      document.documentElement.style.setProperty('--text-color', textColor);
-
-      // Prevent dashboard from inheriting updated root vars:
-      if (dashboardEl) {
-        // keep dashboard using its own fixed colors
-        dashboardEl.style.setProperty('--accent-color', DASHBOARD_DEFAULT_ACCENT);
-        dashboardEl.style.setProperty('--text-color', DASHBOARD_DEFAULT_TEXT);
-        dashboardEl.style.color = DASHBOARD_DEFAULT_TEXT;
-      }
-
-      // save selection
-      localStorage.setItem('selectedPalette', JSON.stringify(item));
+        document.body.classList.remove('light-mode');  
+        darkThemeBtn.classList.add('active');
+        lightThemeBtn.classList.remove('active');
+        document.body.style.background = '#0b0f19';
+        document.body.style.backgroundImage = 'none';
+        localStorage.setItem('theme', 'dark');
     });
 
-    colorPaletteGrid.appendChild(circle);
-  });
-});
-
-
-// Festive Theme Selector
-
-document.addEventListener('DOMContentLoaded', () => {
-  const festiveOptionsEl = document.getElementById('festiveOptions');
-  const particles = document.getElementById('particles-js');
-  if (!festiveOptionsEl) return;
-
-  const mapByLabel = {
-    holi: 'assets/images/photo.jpg',
-    diwali: 'assets/images/diwali.jpg',
-    christmas: 'assets/images/two.jpg',
-    rakshabandhan: 'assets/images/rakshabandhan.jpg',
-    navratri: 'assets/images/nav.jpg'
-  };
-
-  const options = Array.from(festiveOptionsEl.querySelectorAll('.festive-option'));
-
-  const extractUrl = (bg) => {
-    if (!bg || bg === 'none') return null;
-    const m = String(bg).match(/url\(["']?(.*?)["']?\)/);
-    return m ? m[1] : null;
-  };
-
-  const getOptionImage = (opt) => {
-    const img = opt.querySelector('.festive-image');
-    let bg = img && (img.style.backgroundImage || getComputedStyle(img).backgroundImage);
-    const url = extractUrl(bg);
-    if (url) return url;
-    const label = (opt.querySelector('span')?.textContent || '').trim().toLowerCase();
-    return mapByLabel[label] || null;
-  };
-
-  const applyFestive = (url, optEl) => {
-    if (!url) return;
-
-    // preload and check natural size for debugging
-    const preload = new Image();
-    preload.onload = () => {
-      console.log('Festive image loaded:', url, '→', preload.naturalWidth + 'x' + preload.naturalHeight);
-      // if image is small, warn
-      if (preload.naturalWidth < 1200) {
-        console.warn('Festive image appears small — use a higher resolution image (>=1200px wide).');
-      }
-
-      // apply fully-loaded image
-      document.body.style.backgroundImage = `url("${url}")`;
-      document.body.style.transition = 'background-image 0.5s ease-in-out';
-      document.body.style.backgroundSize = 'cover';
-      document.body.style.backgroundPosition = 'center center';
-      document.body.style.backgroundRepeat = 'no-repeat';
-      document.body.style.imageRendering = 'auto';
-
-      // mark that a festive image is active so other handlers can avoid overwriting it
-      document.body.dataset.festive = 'true';
-
-      if (particles) {
-        // ensure particles don't visually block background
-        particles.style.background = 'transparent';
-        particles.style.backgroundImage = 'none';
-        // ensure particles canvas sits behind content (z-index controlled in CSS too)
-      }
-
-      options.forEach(o => o.classList.remove('active'));
-      if (optEl) optEl.classList.add('active');
-      localStorage.setItem('festiveTheme', url);
-    };
-    preload.onerror = () => {
-      console.error('Failed to load festive image:', url);
-      document.body.style.backgroundImage = 'linear-gradient(135deg,#3a0ca3,#00d4ff)';
-      document.body.dataset.festive = 'false';
-    };
-    preload.src = url;
-  };
-
-  options.forEach(opt => {
-    opt.tabIndex = 0;
-    opt.addEventListener('click', () => {
-      const url = getOptionImage(opt);
-      applyFestive(url, opt);
-    });
-    opt.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        opt.click();
-      }
-    });
-  });
-
-  // restore saved festive theme (URL)
-  const saved = localStorage.getItem('festiveTheme');
-  if (saved) {
-    const match = options.find(o => getOptionImage(o) === saved);
-    if (match) applyFestive(saved, match);
-    else applyFestive(saved, null);
-  }
-});
-
-
-
-//Theme presents
-const presetCards = document.querySelectorAll('.preset-card');
-        
-        const themePresets = {
-  professional: {
-    theme: 'dark',
-    fontSize: '20px',
-    fontFamily: "'Roboto', sans-serif",
-    backgroundColor: 'linear-gradient(135deg, #2c3e50, #3498db)',
-    textColor: '#ecf0f1',
-    accentColor: '#3498db',
-    borderRadius: '6px',
-  },
-  creative: {
-    theme: 'dark',
-    fontSize: '20px',
-    fontFamily: "'Montserrat', sans-serif",
-    backgroundColor: 'linear-gradient(135deg, #8e44ad, #e74c3c)',
-    textColor: '#ffffff',
-    accentColor: '#e74c3c',
-    borderRadius: '12px',
-  },
-  minimal: {
-    theme: 'light',
-    fontSize: '20px',
-    fontFamily: "'Open Sans', sans-serif",
-    backgroundColor: 'linear-gradient(135deg, #ecf0f1, #bdc3c7)',
-    textColor: '#ffffff',
-    accentColor: '#3498db',
-    borderRadius: '4px',
-  },
-  tech: {
-    theme: 'dark',
-    fontSize: '20px',
-    fontFamily: "'Lato', sans-serif",
-    backgroundColor: 'linear-gradient(135deg, #000428, #004e92)',
-    textColor: '#ffffff',
-    accentColor: '#00d2d3',
-    borderRadius: '8px',
-  },
-};      
-// ...existing code...
-presetCards.forEach(card => {
-    card.addEventListener('click', () => {
-        const preset = card.dataset.preset;
-        const settings = themePresets[preset];
-        if (!settings) return; // safety
-
-        // Apply theme
-        if (settings.theme === 'light') {
-            document.body.classList.add('light');
-            if (lightThemeBtn) lightThemeBtn.checked = true;
-            if (darkThemeBtn) darkThemeBtn.checked = false;
-            // Update button icon
-            const buttonIcons = openBtn.querySelectorAll('i');
-            buttonIcons.forEach(icon => icon.className = 'fa-solid fa-moon');
-        } else {
-            document.body.classList.remove('light');
-            if (darkThemeBtn) darkThemeBtn.checked = true;
-            if (lightThemeBtn) lightThemeBtn.checked = false;
-            const buttonIcons = openBtn.querySelectorAll('i');
-            buttonIcons.forEach(icon => icon.className = 'fa-solid fa-sun');
-        }
-
-        // Apply typography
-        if (fontSizeSlider) fontSizeSlider.value = parseInt(settings.fontSize);
-        if (fontValue) fontValue.textContent = settings.fontSize;
-        document.documentElement.style.setProperty('--font-size', settings.fontSize);
-        if (fontFamilySelector) fontFamilySelector.value = settings.fontFamily;
-        document.documentElement.style.setProperty('--font-family', settings.fontFamily);
-
-        // Apply background (use .background to support gradients) and ensure particles container is transparent
-        document.body.style.background = settings.backgroundColor;
-        const p = document.getElementById('particles-js');
-        if (p) { p.style.background = 'transparent'; p.style.backgroundImage = 'none'; }
-
-        // Apply text color
-        document.documentElement.style.setProperty('--text-color', settings.textColor);
-
-        // Save settings
-        localStorage.setItem('theme', settings.theme);
-        localStorage.setItem('fontSize', settings.fontSize);
-        localStorage.setItem('fontFamily', settings.fontFamily);
-        localStorage.setItem('backgroundColor', settings.backgroundColor);
-        localStorage.setItem('themeBg', settings.backgroundColor);
-        localStorage.setItem('textColor', settings.textColor);
-
-        // Update active state
-        presetCards.forEach(c => c.classList.remove('active'));
-        card.classList.add('active');
-    });
-});
-// ...existing code...
-
-// Developer Mode
-        const cssVarsToggle = document.getElementById('cssVarsToggle');
-        const perfMetricsToggle = document.getElementById('perfMetricsToggle');
-        const consoleLogsToggle = document.getElementById('consoleLogsToggle');
-        
-        cssVarsToggle.addEventListener('change', () => {
-            if (cssVarsToggle.checked) {
-                // Show CSS variables in console
-                console.log('CSS Variables:', getComputedStyle(document.documentElement));
-            }
-        });
-        
-        perfMetricsToggle.addEventListener('change', () => {
-            if (perfMetricsToggle.checked) {
-                // Show performance metrics
-                console.log('Performance Metrics:', performance.getEntriesByType('navigation'));
-            }
-        });
-        
-        consoleLogsToggle.addEventListener('change', () => {
-            if (consoleLogsToggle.checked) {
-                console.log('Console logs enabled for debugging');
-            }
-        });
-
-
-
-//setting panel
-
-const fixedNavbarToggle = document.getElementById('fixedNavbarToggle');
-        const animationToggle = document.getElementById('animationToggle');
-        const particleToggle = document.getElementById('particleToggle');
-        const smoothScrollToggle = document.getElementById('smoothScrollToggle');
-        const resetSettingsBtn = document.getElementById('resetSettingsBtn');
-        const resetProfessionalBtn = document.getElementById('resetProfessionalBtn');
-        const saveProfileBtn = document.getElementById('saveProfileBtn');
-        
-        fixedNavbarToggle.addEventListener('change', () => {
-            if (fixedNavbarToggle.checked) {
-                document.documentElement.style.setProperty('--navbar-fixed', 'fixed');
-            } else {
-                document.documentElement.style.setProperty('--navbar-fixed', 'relative');
-            }
-            localStorage.setItem('fixedNavbar', fixedNavbarToggle.checked);
-        });
-        
-        animationToggle.addEventListener('change', () => {
-            if (animationToggle.checked) {
-                document.body.classList.remove('no-animation');
-            } else {
-                document.body.classList.add('no-animation');
-            }
-            localStorage.setItem('animationEnabled', animationToggle.checked);
-        });
-        
-        particleToggle.addEventListener('change', () => {
-         
-            if (particleToggle.checked) {
-                document.documentElement.style.setProperty('--particle-opacity', '1');
-            } else {
-                document.documentElement.style.setProperty('--particle-opacity', '0');
-            }
-            localStorage.setItem('particleEnabled', particleToggle.checked);
-        });
-        
-        smoothScrollToggle.addEventListener('change', () => {
-            if (smoothScrollToggle.checked) {
-                document.documentElement.style.setProperty('--smooth-scrolling', 'smooth');
-            } else {
-                document.documentElement.style.setProperty('--smooth-scrolling', 'auto');
-            }
-            localStorage.setItem('smoothScrolling', smoothScrollToggle.checked);
-        });
-        
-        // Load saved settings
-        if (localStorage.getItem('fixedNavbar') !== null) {
-            const fixed = localStorage.getItem('fixedNavbar') === 'true';
-            fixedNavbarToggle.checked = fixed;
-            document.documentElement.style.setProperty('--navbar-fixed', fixed ? 'fixed' : 'relative');
-        }
-        
-        if (localStorage.getItem('animationEnabled') !== null) {
-            const anim = localStorage.getItem('animationEnabled') === 'true';
-            animationToggle.checked = anim;
-            if (!anim) {
-                document.body.classList.add('no-animation');
-            }
-        }
-        
-        if (localStorage.getItem('particleEnabled') !== null) {
-            const particles = localStorage.getItem('particleEnabled') === 'true';
-            particleToggle.checked = particles;
-            document.documentElement.style.setProperty('--particle-opacity', particles ? '1' : '0');
-        }
-        
-        if (localStorage.getItem('smoothScrolling') !== null) {
-            const smooth = localStorage.getItem('smoothScrolling') === 'true';
-            smoothScrollToggle.checked = smooth;
-            document.documentElement.style.setProperty('--smooth-scrolling', smooth ? 'smooth' : 'auto');
-        }
-        
-      //Change the profile image
-     const changeProfileToggle = document.getElementById('changeProfileToggle');
-const profileImageUpload = document.getElementById('profileImageUpload');
-const profileImageInput = document.getElementById('profileImageInput');
-
-// Store default image sources
-const defaultImages = [];
-document.querySelectorAll('.profile-image').forEach((img, index) => {
-    defaultImages[index] = img.src;  // Save original source
-});
-
-changeProfileToggle.addEventListener('change', () => {
-    if (changeProfileToggle.checked) {
-        profileImageUpload.style.display = 'block';
+    if (localStorage.getItem('theme') === 'light') {
+        document.body.classList.add('light-mode');
+        lightThemeBtn.classList.add('active');
+        darkThemeBtn.classList.remove('active');
     } else {
-        profileImageUpload.style.display = 'none';
-        // Revert to default images when toggle is OFF
-        document.querySelectorAll('.profile-image').forEach((img, index) => {
-            img.src = defaultImages[index];
-        });
+        darkThemeBtn.classList.add('active');
+        lightThemeBtn.classList.remove('active');
     }
-});
 
-profileImageInput.addEventListener('change', (event) => {
-    const file = event.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            document.querySelectorAll('.profile-image').forEach(img => {
-                img.src = e.target.result;
-            });
-        };
-        reader.readAsDataURL(file);
-    }
-});
+    // Typography
+    const fontsize = document.getElementById('fontSizeSlider');
+    const fontValue = document.getElementById('fontSizeValue');
+    const fontfamily = document.getElementById('fontFamilySelector');
+    const resetFontBtn = document.getElementById('resetFontBtn');
 
-//enable text editing
-const textEditToggle = document.getElementById('textEditToggle');
-const textEditPanel = document.getElementById('textEditPanel');
-const saveTextBtn = document.getElementById('saveTextBtn');
-
-// Elements from your site
-const homeNameEl = document.querySelector('.home-name');
-const homeRoleEl = document.querySelector('.home-role');
-const aboutDescEl = document.querySelector('.about-description');
-
-// Save default text
-const defaultText = {
-  homeName: homeNameEl.textContent,
-  homeRole: homeRoleEl.textContent,
-  aboutDesc: aboutDescEl.textContent
-};
-
-// Toggle ON/OFF behavior
-textEditToggle.addEventListener('change', () => {
-  if (textEditToggle.checked) {
-    textEditPanel.style.display = 'block';
-    // Fill current text into input fields
-    document.getElementById('editHomeName').value = homeNameEl.textContent;
-    document.getElementById('editHomeRole').value = homeRoleEl.textContent;
-    document.getElementById('editAboutText').value = aboutDescEl.textContent;
-  } else {
-    textEditPanel.style.display = 'none';
-    // Reset to default
-    homeNameEl.textContent = defaultText.homeName;
-    homeRoleEl.textContent = defaultText.homeRole;
-    aboutDescEl.textContent = defaultText.aboutDesc;
-    localStorage.removeItem('customText');
-  }
-});
-
-// Save new text
-saveTextBtn.addEventListener('click', () => {
-  const newHomeName = document.getElementById('editHomeName').value;
-  const newHomeRole = document.getElementById('editHomeRole').value;
-  const newAboutText = document.getElementById('editAboutText').value;
-
-  homeNameEl.textContent = newHomeName;
-  homeRoleEl.textContent = newHomeRole;
-  aboutDescEl.textContent = newAboutText;
-
-  // Save in localStorage
-  localStorage.setItem('customText', JSON.stringify({
-    homeName: newHomeName,
-    homeRole: newHomeRole,
-    aboutDesc: newAboutText
-  }));
-});
-
-// Restore saved text on page load
-window.addEventListener('DOMContentLoaded', () => {
-  const saved = localStorage.getItem('customText');
-  if (saved) {
-    const { homeName, homeRole, aboutDesc } = JSON.parse(saved);
-    if (homeName) homeNameEl.textContent = homeName;
-    if (homeRole) homeRoleEl.textContent = homeRole;
-    if (aboutDesc) aboutDescEl.textContent = aboutDesc;
-  }
-});
-
-
-        // Reset All to Default
-        resetSettingsBtn.addEventListener('click', () => {
-            // Clear all localStorage
-            localStorage.clear();
-            
-            // Reset to default theme
-            document.body.classList.remove('light');
-            darkThemeBtn.checked = true;
-            lightThemeBtn.checked = false;
-            // Update button icon
-            const buttonIcons = openBtn.querySelectorAll('i');
-            buttonIcons.forEach(icon => {
-                icon.className = 'fa-solid fa-sun';
-            });
-            
-            // Reset typography
-            fontsize.value = 20;
-            fontValue.textContent = '20px';
-            document.documentElement.style.setProperty('--font-size', '20px');
-            fontFamilySelector.value = "'Roboto', 'Poppins', sans-serif";
-            document.documentElement.style.setProperty('--font-family', "'Roboto','Poppins', sans-serif");
-            
-            // Reset background
-            document.body.style.backgroundColor = '#11121a';
-            document.documentElement.style.setProperty('--text-color', '#ffffff');
-            
-
-// Reset background
-document.body.style.backgroundColor = '#11121a';
-document.body.style.backgroundImage = 'none'; // reset any image
-document.documentElement.style.setProperty('--text-color', '#ffffff');
-
-
-            // Reset settings
-            fixedNavbarToggle.checked = true;
-            document.documentElement.style.setProperty('--navbar-fixed', 'fixed');
-            animationToggle.checked = true;
-            document.body.classList.remove('no-animation');
-            particleToggle.checked = true;
-            document.documentElement.style.setProperty('--particle-opacity', '1');
-            smoothScrollToggle.checked = true;
-            document.documentElement.style.setProperty('--smooth-scrolling', 'smooth');
-            
-            // Reset active states
-            document.querySelectorAll('.color-circle').forEach(c => c.classList.remove('active'));
-            document.querySelectorAll('.festive-option').forEach(o => o.classList.remove('active'));
-            document.querySelectorAll('.preset-card').forEach(c => c.classList.remove('active'));
-            
-            alert('All settings have been reset to default!');
-        });
-        
-        // Fixed: Reset to Professional Default
-resetProfessionalBtn.addEventListener('click', () => {
-    // Apply professional preset
-    const settings = themePresets.professional;
-
-    // Apply theme
-    document.body.classList.remove('light');
-    darkThemeBtn.checked = true;
-    lightThemeBtn.checked = false;
-
-    // Update button icon
-    const buttonIcons = openBtn.querySelectorAll('i');
-    buttonIcons.forEach(icon => {
-        icon.className = 'fa-solid fa-sun';
+    fontsize.addEventListener('input', () => {
+        const size = fontsize.value + 'px';
+        document.documentElement.style.fontSize = size;
+        fontValue.textContent = size;
+        localStorage.setItem('fontSize', size);
     });
 
-    // Apply typography
-    fontsize.value = parseInt(settings.fontSize);
-    fontValue.textContent = settings.fontSize;
-    document.documentElement.style.setProperty('--font-size', settings.fontSize);
-    fontFamilySelector.value = settings.fontFamily;
-    document.documentElement.style.setProperty('--font-family', settings.fontFamily);
+    fontfamily.addEventListener('change', () => {
+        document.body.style.fontFamily = fontfamily.value;
+        localStorage.setItem('fontfamily', fontfamily.value);
+    });
 
-    // Reset festive background completely
-    document.body.style.backgroundImage = 'none';
-    document.body.style.backgroundColor = settings.backgroundColor;
-    document.documentElement.style.setProperty('--text-color', settings.textColor);
-    document.body.dataset.festive = 'false'; // clear festive state
+    const savedFontSize = localStorage.getItem('fontSize');
+    const savedFontFamily = localStorage.getItem('fontfamily');
+    if (savedFontSize) {
+        document.documentElement.style.fontSize = savedFontSize;
+        fontValue.textContent = savedFontSize;
+        fontsize.value = parseInt(savedFontSize);
+    }
+    if (savedFontFamily) {
+        document.body.style.fontFamily = savedFontFamily;
+        fontfamily.value = savedFontFamily;
+    }
 
-    // Clear festive and palette selections visually
-    document.querySelectorAll('.festive-option').forEach(o => o.classList.remove('active'));
-    document.querySelectorAll('.color-circle').forEach(c => c.classList.remove('active'));
+    resetFontBtn.addEventListener('click', () => {
+        document.documentElement.style.fontSize = '16px';
+        document.body.style.fontFamily = "'Poppins', sans-serif";
+        fontsize.value = 16;
+        fontValue.textContent = '16px';
+        fontfamily.value = "'Poppins', sans-serif";
+        localStorage.removeItem('fontSize');
+        localStorage.removeItem('fontfamily');
+    });
 
-    // Apply main settings
-    fixedNavbarToggle.checked = true;
-    document.documentElement.style.setProperty('--navbar-fixed', 'fixed');
-    animationToggle.checked = true;
-    document.body.classList.remove('no-animation');
-    particleToggle.checked = true;
-    document.documentElement.style.setProperty('--particle-opacity', '1');
-    smoothScrollToggle.checked = true;
-    document.documentElement.style.setProperty('--smooth-scrolling', 'smooth');
+    // Color Palette
+    const colorPaletteData = [
+        { colors: ['#FF6B6B', '#FFE66D'], icon: null },
+        { colors: ['#4ECDC4', '#1A535C'], icon: null },
+        { colors: ['#FF9F1C', '#2EC4B6'], icon: null },
+        { colors: ['#E71D36', '#FF9F1C'], icon: null },
+        { colors: ['#6A0572', '#AB83A1'], icon: null },
+        { colors: ['#2E86AB', '#A23B72'], icon: null },
+        { colors: ['#F18F01', '#C73E1D'], icon: null },
+        { colors: ['#5E60CE', '#5390D9'], icon: null },
+        { colors: ['#4CC9F0', '#4361EE'], icon: null },
+        { colors: ['#8B4513', '#D2B48C'], icon: 'check' },
+        { colors: ['#F72585', '#7209B7'], icon: null },
+        { colors: ['#3A0CA3', '#4361EE'], icon: null },
+        { colors: ['#F94144', '#F3722C'], icon: null },
+        { colors: ['#F8961E', '#F9844A'], icon: null },
+        { colors: ['#90BE6D', '#43AA8B'], icon: null },
+        { colors: ['#FFA500', '#FFA500'], icon: 'pen' }
+    ];
 
-    // Save only professional settings and remove festiveTheme
-    localStorage.setItem('theme', settings.theme);
-    localStorage.setItem('fontSize', settings.fontSize);
-    localStorage.setItem('fontFamily', settings.fontFamily);
-    localStorage.setItem('backgroundColor', settings.backgroundColor);
-    localStorage.setItem('textColor', settings.textColor);
-    localStorage.setItem('fixedNavbar', true);
-    localStorage.setItem('animationEnabled', true);
-    localStorage.setItem('particleEnabled', true);
-    localStorage.setItem('smoothScrolling', true);
-    localStorage.removeItem('festiveTheme'); // remove festive theme
-    localStorage.removeItem('selectedPalette'); // optional: also clear color palette
+    const colorPaletteGrid = document.getElementById('colorPaletteGrid');
+    if (colorPaletteGrid) {
+        colorPaletteData.forEach((item) => {
+            const circle = document.createElement('div');
+            circle.classList.add('color-circle');
+            const top = document.createElement('div');
+            top.classList.add('color-split', 'top');
+            top.style.backgroundColor = item.colors[0];
+            const bottom = document.createElement('div');
+            bottom.classList.add('color-split', 'bottom');
+            bottom.style.backgroundColor = item.colors[1] || item.colors[0];
+            circle.appendChild(top);
+            circle.appendChild(bottom);
+            if (item.icon) {
+                const icon = document.createElement('i');
+                icon.className = `color-icon fas fa-${item.icon}`;
+                circle.appendChild(icon);
+            }
+            circle.addEventListener('click', () => {
+                document.querySelectorAll('.color-circle').forEach(c => c.classList.remove('active'));
+                circle.classList.add('active');
+                document.body.style.background = `linear-gradient(135deg, ${item.colors[0]}, ${item.colors[1] || item.colors[0]})`;
+                document.documentElement.style.setProperty('--accent', item.colors[0]);
+                localStorage.setItem('selectedPalette', JSON.stringify(item));
+            });
+            colorPaletteGrid.appendChild(circle);
+        });
+    }
 
-    // Update preset active state
-    presetCards.forEach(c => c.classList.remove('active'));
-    document.querySelector('[data-preset="professional"]').classList.add('active');
-
-    alert('Reset to professional default settings!');
-});
-
-        // Save Profile
-        saveProfileBtn.addEventListener('click', () => {
-            const profileSettings = {
-                theme: localStorage.getItem('theme') || 'dark',
-                fontSize: localStorage.getItem('fontSize') || '16px',
-                fontFamily: localStorage.getItem('fontFamily') || "'Poppins', sans-serif",
-                backgroundColor: localStorage.getItem('backgroundColor') || '#11121a',
-                textColor: localStorage.getItem('textColor') || '#ffffff',
-                fixedNavbar: localStorage.getItem('fixedNavbar') !== 'false',
-                animationEnabled: localStorage.getItem('animationEnabled') !== 'false',
-                particleEnabled: localStorage.getItem('particleEnabled') !== 'false',
-                smoothScrolling: localStorage.getItem('smoothScrolling') !== 'false',
-                selectedPalette: localStorage.getItem('selectedPalette'),
-                festiveTheme: localStorage.getItem('festiveTheme')
+    // Festive Theme
+    const festiveOptionsEl = document.getElementById('festiveOptions');
+    if (festiveOptionsEl) {
+        const options = Array.from(festiveOptionsEl.querySelectorAll('.festive-option'));
+        const extractUrl = (bg) => {
+            if (!bg || bg === 'none') return null;
+            const m = String(bg).match(/url\(["']?(.*?)["']?\)/);
+            return m ? m[1] : null;
+        };
+        const getOptionImage = (opt) => {
+            const img = opt.querySelector('.festive-image');
+            let bg = img && (img.style.backgroundImage || getComputedStyle(img).backgroundImage);
+            return extractUrl(bg);
+        };
+        const applyFestive = (url, optEl) => {
+            if (!url) return;
+            const preload = new Image();
+            preload.onload = () => {
+                document.body.style.backgroundImage = `url("${url}")`;
+                document.body.style.backgroundSize = 'cover';
+                document.body.style.backgroundPosition = 'center';
+                document.body.style.backgroundRepeat = 'no-repeat';
+                options.forEach(o => o.classList.remove('active'));
+                if (optEl) optEl.classList.add('active');
+                localStorage.setItem('festiveTheme', url);
             };
-            
-            const profileId = 'portfolio_' + Date.now();
-            localStorage.setItem(profileId, JSON.stringify(profileSettings));
-            
-            const shareUrl = `${window.location.origin}${window.location.pathname}?profile=${profileId}`;
-            
-            // Copy to clipboard
-            navigator.clipboard.writeText(shareUrl).then(() => {
-                alert(`Profile saved! Share this URL: ${shareUrl}`);
-            }).catch(() => {
-                // Fallback: show in a prompt
-                prompt('Copy this URL to share your profile:', shareUrl);
+            preload.onerror = () => {
+                document.body.style.backgroundImage = 'none';
+            };
+            preload.src = url;
+        };
+        options.forEach(opt => {
+            opt.addEventListener('click', () => {
+                const url = getOptionImage(opt);
+                applyFestive(url, opt);
             });
         });
-        // Reset to Professional Default
-resetProfessionalBtn.addEventListener('click', () => {
-  const settings = themePresets.professional;
-  
-  // Apply theme
-  if (settings.theme === 'light') {
-    document.body.classList.add('light');
-    lightThemeBtn.checked = true;
-    darkThemeBtn.checked = false;
-    const buttonIcons = openBtn.querySelectorAll('i');
-    buttonIcons.forEach(icon => icon.className = 'fa-solid fa-moon');
-  } else {
-    document.body.classList.remove('light');
-    darkThemeBtn.checked = true;
-    lightThemeBtn.checked = false;
-    const buttonIcons = openBtn.querySelectorAll('i');
-    buttonIcons.forEach(icon => icon.className = 'fa-solid fa-sun');
-  }
-
-  // Typography
-  fontsize.value = parseInt(settings.fontSize);
-  fontValue.textContent = settings.fontSize;
-  document.documentElement.style.setProperty('--font-size', settings.fontSize);
-  fontfamily.value = settings.fontFamily;
-  document.documentElement.style.setProperty('--font-family', settings.fontFamily);
-
-  // Background & text color
-  document.body.style.background = settings.backgroundColor;
-  document.documentElement.style.setProperty('--text-color', settings.textColor);
-
-  // Accent color (optional for buttons/links)
-  document.documentElement.style.setProperty('--accent-color', settings.accentColor);
-
-  // Reset particles background to transparent
-  const particles = document.getElementById('particles-js');
-  if (particles) {
-    particles.style.background = 'transparent';
-    particles.style.backgroundImage = 'none';
-  }
-
-  // Save settings in localStorage
-  localStorage.setItem('theme', settings.theme);
-  localStorage.setItem('fontSize', settings.fontSize);
-  localStorage.setItem('fontFamily', settings.fontFamily);
-  localStorage.setItem('backgroundColor', settings.backgroundColor);
-  localStorage.setItem('textColor', settings.textColor);
-  localStorage.setItem('accentColor', settings.accentColor);
-
-  // Clear active festive/palette/preset
-  document.querySelectorAll('.color-circle').forEach(c => c.classList.remove('active'));
-  document.querySelectorAll('.festive-option').forEach(o => o.classList.remove('active'));
-  document.querySelectorAll('.preset-card').forEach(c => c.classList.remove('active'));
-
-  // Mark professional preset as active
-  const professionalCard = document.querySelector('.preset-card[data-preset="professional"]');
-  if (professionalCard) professionalCard.classList.add('active');
-
-  alert('Theme reset to Professional default!');
-});
-
-        
-        // Load profile from URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const profileId = urlParams.get('profile');
-        if (profileId && localStorage.getItem(profileId)) {
-            const profileSettings = JSON.parse(localStorage.getItem(profileId));
-            
-            // Apply settings
-            if (profileSettings.theme === 'light') {
-                document.body.classList.add('light');
-                lightThemeBtn.checked = true;
-                darkThemeBtn.checked = false;
-                // Update button icon
-                const buttonIcons = openBtn.querySelectorAll('i');
-                buttonIcons.forEach(icon => {
-                    icon.className = 'fa-solid fa-moon';
-                });
-            } else {
-                document.body.classList.remove('light');
-                darkThemeBtn.checked = true;
-                lightThemeBtn.checked = false;
-                // Update button icon
-                const buttonIcons = openBtn.querySelectorAll('i');
-                buttonIcons.forEach(icon => {
-                    icon.className = 'fa-solid fa-sun';
-                });
-            }
-            
-            if (profileSettings.fontSize) {
-                fontSizeSlider.value = parseInt(profileSettings.fontSize);
-                fontValue.textContent = profileSettings.fontSize;
-                document.documentElement.style.setProperty('--font-size', profileSettings.fontSize);
-            }
-            
-            if (profileSettings.fontFamily) {
-                fontFamilySelector.value = profileSettings.fontFamily;
-                document.documentElement.style.setProperty('--font-family', profileSettings.fontFamily);
-            }
-            
-            if (profileSettings.backgroundColor) {
-                document.body.style.backgroundColor = profileSettings.backgroundColor;
-            }
-            
-            if (profileSettings.textColor) {
-                document.documentElement.style.setProperty('--text-color', profileSettings.textColor);
-            }
-            
-            if (profileSettings.fixedNavbar !== undefined) {
-                fixedNavbarToggle.checked = profileSettings.fixedNavbar;
-                document.documentElement.style.setProperty('--navbar-fixed', profileSettings.fixedNavbar ? 'fixed' : 'relative');
-            }
-            
-            if (profileSettings.animationEnabled !== undefined) {
-                animationToggle.checked = profileSettings.animationEnabled;
-                if (!profileSettings.animationEnabled) {
-                    document.body.classList.add('no-animation');
-                }
-            }
-            
-            if (profileSettings.particleEnabled !== undefined) {
-                particleToggle.checked = profileSettings.particleEnabled;
-                document.documentElement.style.setProperty('--particle-opacity', profileSettings.particleEnabled ? '1' : '0');
-            }
-            
-            if (profileSettings.smoothScrolling !== undefined) {
-                smoothScrollToggle.checked = profileSettings.smoothScrolling;
-                document.documentElement.style.setProperty('--smooth-scrolling', profileSettings.smoothScrolling ? 'smooth' : 'auto');
-            }
-            
-            // Load selected palette if exists
-            if (profileSettings.selectedPalette) {
-                const savedPalette = JSON.parse(profileSettings.selectedPalette);
-                const index = colorPaletteData.findIndex(item => 
-                    JSON.stringify(item) === JSON.stringify(savedPalette)
-                );
-                
-                if (index !== -1) {
-                    const circle = colorPaletteGrid.children[index];
-                    circle.click();
-                }
-            }
-            
-            // Load festive theme if exists
-            if (profileSettings.festiveTheme) {
-                const index = festiveThemes.findIndex(theme => theme.name === profileSettings.festiveTheme);
-                if (index !== -1) {
-                    festiveOptions.children[index].click();
-                }
-            }
+        const savedFestive = localStorage.getItem('festiveTheme');
+        if (savedFestive) {
+            const match = options.find(o => getOptionImage(o) === savedFestive);
+            if (match) applyFestive(savedFestive, match);
         }
+    }
+
+    // Theme Presets
+    const presetCards = document.querySelectorAll('.preset-card');
+    const themePresets = {
+        professional: { theme: 'dark', backgroundColor: '#1a2a3a', textColor: '#ecf0f1', accentColor: '#3498db' },
+        creative: { theme: 'dark', backgroundColor: '#2a1a2a', textColor: '#ffffff', accentColor: '#e74c3c' },
+        minimal: { theme: 'light', backgroundColor: '#f0f0f0', textColor: '#333333', accentColor: '#3498db' },
+        tech: { theme: 'dark', backgroundColor: '#000428', textColor: '#ffffff', accentColor: '#00d2d3' },
+    };
+    
+    presetCards.forEach(card => {
+        card.addEventListener('click', () => {
+            const preset = card.dataset.preset;
+            const settings = themePresets[preset];
+            if (!settings) return;
+
+            if (settings.theme === 'light') {
+                document.body.classList.add('light-mode');
+                lightThemeBtn.classList.add('active');
+                darkThemeBtn.classList.remove('active');
+            } else {
+                document.body.classList.remove('light-mode');
+                darkThemeBtn.classList.add('active');
+                lightThemeBtn.classList.remove('active');
+            }
+
+            document.body.style.background = settings.backgroundColor;
+            document.body.style.backgroundImage = 'none';
+            document.documentElement.style.setProperty('--text-primary', settings.textColor);
+            document.documentElement.style.setProperty('--accent', settings.accentColor);
+            localStorage.setItem('theme', settings.theme);
+            presetCards.forEach(c => c.classList.remove('active'));
+            card.classList.add('active');
+        });
+    });
+
+    // Developer Mode
+    const cssVarsToggle = document.getElementById('cssVarsToggle');
+    const perfMetricsToggle = document.getElementById('perfMetricsToggle');
+    const consoleLogsToggle = document.getElementById('consoleLogsToggle');
+    
+    if (cssVarsToggle) cssVarsToggle.addEventListener('change', () => {
+        if (cssVarsToggle.checked) console.log('CSS Variables:', getComputedStyle(document.documentElement));
+    });
+    if (perfMetricsToggle) perfMetricsToggle.addEventListener('change', () => {
+        if (perfMetricsToggle.checked) console.log('Performance:', performance.getEntriesByType('navigation'));
+    });
+    if (consoleLogsToggle) consoleLogsToggle.addEventListener('change', () => {
+        if (consoleLogsToggle.checked) console.log('Console logs enabled');
+    });
+
+    // Settings Panel
+    const fixedNavbarToggle = document.getElementById('fixedNavbarToggle');
+    const animationToggle = document.getElementById('animationToggle');
+    const particleToggle = document.getElementById('particleToggle');
+    const smoothScrollToggle = document.getElementById('smoothScrollToggle');
+    const resetSettingsBtn = document.getElementById('resetSettingsBtn');
+    const resetProfessionalBtn = document.getElementById('resetProfessionalBtn');
+    const saveProfileBtn = document.getElementById('saveProfileBtn');
+    const canvas = document.getElementById('bg-canvas');
+    
+    if (fixedNavbarToggle) fixedNavbarToggle.addEventListener('change', () => {
+        document.getElementById('navbar').style.position = fixedNavbarToggle.checked ? 'fixed' : 'relative';
+        localStorage.setItem('fixedNavbar', fixedNavbarToggle.checked);
+    });
+    
+    if (animationToggle) animationToggle.addEventListener('change', () => {
+        if (animationToggle.checked) document.body.classList.remove('no-animation');
+        else document.body.classList.add('no-animation');
+        localStorage.setItem('animationEnabled', animationToggle.checked);
+    });
+    
+    if (particleToggle) particleToggle.addEventListener('change', () => {
+        canvas.classList.toggle('hidden', !particleToggle.checked);
+        localStorage.setItem('particleEnabled', particleToggle.checked);
+    });
+    
+    if (smoothScrollToggle) smoothScrollToggle.addEventListener('change', () => {
+        document.documentElement.style.scrollBehavior = smoothScrollToggle.checked ? 'smooth' : 'auto';
+        localStorage.setItem('smoothScrolling', smoothScrollToggle.checked);
+    });
+
+    // Profile Image
+    const changeProfileToggle = document.getElementById('changeProfileToggle');
+    const profileImageUpload = document.getElementById('profileImageUpload');
+    const profileImageInput = document.getElementById('profileImageInput');
+    const defaultImages = [];
+    document.querySelectorAll('.profile-image, .hero-image').forEach((img, i) => defaultImages[i] = img.src);
+    
+    if (changeProfileToggle) changeProfileToggle.addEventListener('change', () => {
+        profileImageUpload.style.display = changeProfileToggle.checked ? 'block' : 'none';
+        if (!changeProfileToggle.checked) {
+            document.querySelectorAll('.profile-image, .hero-image').forEach((img, i) => img.src = defaultImages[i]);
+        }
+    });
+    if (profileImageInput) profileImageInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (ev) => document.querySelectorAll('.profile-image, .hero-image').forEach(img => img.src = ev.target.result);
+            reader.readAsDataURL(file);
+        }
+    });
+
+    // Text Editing
+    const textEditToggle = document.getElementById('textEditToggle');
+    const textEditPanel = document.getElementById('textEditPanel');
+    const saveTextBtn = document.getElementById('saveTextBtn');
+    const homeNameEl = document.querySelector('.hero-name');
+    const aboutDescEl = document.querySelector('.about-description');
+    const defaultText = { name: homeNameEl?.textContent || '', about: aboutDescEl?.textContent || '' };
+
+    if (textEditToggle) textEditToggle.addEventListener('change', () => {
+        textEditPanel.style.display = textEditToggle.checked ? 'block' : 'none';
+        if (textEditToggle.checked) {
+            document.getElementById('editHomeName').value = homeNameEl?.textContent || '';
+            document.getElementById('editAboutText').value = aboutDescEl?.textContent || '';
+        } else {
+            if (homeNameEl) homeNameEl.textContent = defaultText.name;
+            if (aboutDescEl) aboutDescEl.textContent = defaultText.about;
+            localStorage.removeItem('customText');
+        }
+    });
+    if (saveTextBtn) saveTextBtn.addEventListener('click', () => {
+        if (homeNameEl) homeNameEl.textContent = document.getElementById('editHomeName').value;
+        if (aboutDescEl) aboutDescEl.textContent = document.getElementById('editAboutText').value;
+        localStorage.setItem('customText', JSON.stringify({
+            name: document.getElementById('editHomeName').value,
+            about: document.getElementById('editAboutText').value
+        }));
+    });
+
+    const savedText = localStorage.getItem('customText');
+    if (savedText) {
+        const t = JSON.parse(savedText);
+        if (t.name && homeNameEl) homeNameEl.textContent = t.name;
+        if (t.about && aboutDescEl) aboutDescEl.textContent = t.about;
+    }
+
+    // Reset All
+    if (resetSettingsBtn) resetSettingsBtn.addEventListener('click', () => {
+        localStorage.clear();
+        document.body.classList.remove('light-mode');
+        darkThemeBtn.classList.add('active');
+        lightThemeBtn.classList.remove('active');
+        document.documentElement.style.fontSize = '16px';
+        document.body.style.fontFamily = "'Poppins', sans-serif";
+        fontsize.value = 16; fontValue.textContent = '16px'; fontfamily.value = "'Poppins', sans-serif";
+        document.body.style.background = '#0b0f19';
+        document.body.style.backgroundImage = 'none';
+        document.documentElement.style.setProperty('--text-primary', '#ffffff');
+        document.documentElement.style.setProperty('--accent', '#00d4ff');
+        if (fixedNavbarToggle) fixedNavbarToggle.checked = true;
+        document.getElementById('navbar').style.position = 'fixed';
+        if (animationToggle) animationToggle.checked = true;
+        document.body.classList.remove('no-animation');
+        if (particleToggle) particleToggle.checked = true;
+        canvas.classList.remove('hidden');
+        if (smoothScrollToggle) smoothScrollToggle.checked = true;
+        document.documentElement.style.scrollBehavior = 'smooth';
+        document.querySelectorAll('.color-circle').forEach(c => c.classList.remove('active'));
+        document.querySelectorAll('.festive-option').forEach(o => o.classList.remove('active'));
+        presetCards.forEach(c => c.classList.remove('active'));
+        document.querySelectorAll('.profile-image, .hero-image').forEach((img, i) => img.src = defaultImages[i]);
+        alert('All settings reset to default!');
+    });
+
+    // Reset to Professional
+    if (resetProfessionalBtn) resetProfessionalBtn.addEventListener('click', () => {
+        const s = themePresets.professional;
+        document.body.classList.remove('light-mode');
+        darkThemeBtn.classList.add('active');
+        lightThemeBtn.classList.remove('active');
+        document.body.style.background = s.backgroundColor;
+        document.body.style.backgroundImage = 'none';
+        document.documentElement.style.setProperty('--text-primary', s.textColor);
+        document.documentElement.style.setProperty('--accent', s.accentColor);
+        document.querySelectorAll('.festive-option').forEach(o => o.classList.remove('active'));
+        document.querySelectorAll('.color-circle').forEach(c => c.classList.remove('active'));
+        presetCards.forEach(c => c.classList.remove('active'));
+        document.querySelector('[data-preset="professional"]').classList.add('active');
+        localStorage.setItem('theme', 'dark');
+        localStorage.removeItem('festiveTheme');
+        localStorage.removeItem('selectedPalette');
+        alert('Reset to Professional default!');
+    });
+
+    // Save Profile
+    if (saveProfileBtn) saveProfileBtn.addEventListener('click', () => {
+        const profileSettings = {
+            theme: localStorage.getItem('theme') || 'dark',
+            fontSize: localStorage.getItem('fontSize') || '16px',
+            fontFamily: localStorage.getItem('fontfamily') || "'Poppins', sans-serif",
+        };
+        const profileId = 'portfolio_' + Date.now();
+        localStorage.setItem(profileId, JSON.stringify(profileSettings));
+        const shareUrl = `${window.location.origin}${window.location.pathname}?profile=${profileId}`;
+        navigator.clipboard.writeText(shareUrl).then(() => {
+            alert('Profile saved! URL copied: ' + shareUrl);
+        }).catch(() => {
+            prompt('Copy this URL:', shareUrl);
+        });
+    });
+
+    // Load saved settings on start
+    if (localStorage.getItem('fixedNavbar') === 'false' && fixedNavbarToggle) {
+        fixedNavbarToggle.checked = false;
+        document.getElementById('navbar').style.position = 'relative';
+    }
+    if (localStorage.getItem('animationEnabled') === 'false' && animationToggle) {
+        animationToggle.checked = false;
+        document.body.classList.add('no-animation');
+    }
+    if (localStorage.getItem('particleEnabled') === 'false' && particleToggle) {
+        particleToggle.checked = false;
+        canvas.classList.add('hidden');
+    }
+    if (localStorage.getItem('smoothScrolling') === 'false' && smoothScrollToggle) {
+        smoothScrollToggle.checked = false;
+        document.documentElement.style.scrollBehavior = 'auto';
+    }
+}
+
+// === 3D SKILLS CAROUSEL ===
+// function initSkillsCarousel() {
+//     const canvas = document.getElementById('skills-canvas');
+//     if(!canvas) return;
+    
+//     const skills = [
+//         { title: "HTML", img: "https://upload.wikimedia.org/wikipedia/commons/6/61/HTML5_logo_and_wordmark.svg" },
+//         { title: "CSS", img: "https://upload.wikimedia.org/wikipedia/commons/d/d5/CSS3_logo_and_wordmark.svg" },
+//         { title: "JavaScript", img: "https://upload.wikimedia.org/wikipedia/commons/9/99/Unofficial_JavaScript_logo_2.svg" },
+//         { title: "React", img: "https://upload.wikimedia.org/wikipedia/commons/a/a7/React-icon.svg" },
+//         { title: "Node.js", img: "https://upload.wikimedia.org/wikipedia/commons/d/d9/Node.js_logo.svg" },
+//         { title: "MongoDB", img: "https://upload.wikimedia.org/wikipedia/commons/9/93/MongoDB_Logo.svg" }
+//     ];
+
+//     const scene = new THREE.Scene();
+//     const camera = new THREE.PerspectiveCamera(45, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
+//     camera.position.z = 10;
+//     const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+//     renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+
+//     scene.add(new THREE.AmbientLight(0xffffff, 0.8));
+//     const spotLight = new THREE.SpotLight(0x00d4ff, 2);
+//     spotLight.position.set(5, 10, 10);
+//     scene.add(spotLight);
+
+//     const carousel = new THREE.Group();
+//     scene.add(carousel);
+//     const cards = [];
+//     const radius = 4;
+//     const loader = new THREE.TextureLoader();
+
+//     skills.forEach((skill, i) => {
+//         const angle = (i / skills.length) * Math.PI * 2;
+//         const geo = new THREE.BoxGeometry(2.5, 3, 0.1);
+//         loader.load(skill.img, (tex) => {
+//             const mat = new THREE.MeshStandardMaterial({ map: tex, transparent: true, roughness: 0.3, metalness: 0.2 });
+//             const mesh = new THREE.Mesh(geo, mat);
+//             mesh.position.x = Math.sin(angle) * radius;
+//             mesh.position.z = Math.cos(angle) * radius;
+//             mesh.lookAt(0, 0, 0);
+//             carousel.add(mesh);
+//             cards.push(mesh);
+//         });
+//     });
+
+//     let currentIndex = 0;
+//     const titleEl = document.getElementById('skill-title');
+//     const dotsContainer = document.getElementById('skills-dots');
+
+//     skills.forEach((_, i) => {
+//         const dot = document.createElement('div');
+//         dot.classList.add('dot');
+//         if(i === 0) dot.classList.add('active');
+//         dot.onclick = () => goTo(i);
+//         dotsContainer.appendChild(dot);
+//     });
+//     const dots = document.querySelectorAll('.dot');
+
+//     function updateUI(i) {
+//         gsap.to('.skills-ui', { autoAlpha: 0, y: 20, duration: 0.2, onComplete: () => {
+//             titleEl.innerText = skills[i].title;
+//             gsap.to('.skills-ui', { autoAlpha: 1, y: 0, duration: 0.3 });
+//         }});
+//         dots.forEach((d, idx) => d.classList.toggle('active', idx === i));
+//     }
+
+//     function goTo(i) {
+//         if(i === currentIndex) return;
+//         currentIndex = i;
+//         const targetAngle = -(i / skills.length) * Math.PI * 2;
+//         gsap.to(carousel.rotation, { y: targetAngle, duration: 1.2, ease: "power2.inOut" });
+//         updateUI(i);
+//     }
+
+//     document.getElementById('skill-prev').onclick = () => goTo(currentIndex === 0 ? skills.length - 1 : currentIndex - 1);
+//     document.getElementById('skill-next').onclick = () => goTo(currentIndex === skills.length - 1 ? 0 : currentIndex + 1);
+//     updateUI(0);
+
+//     const animate = () => {
+//         requestAnimationFrame(animate);
+//         cards.forEach((c, i) => { if(c) c.position.y = Math.sin(Date.now() * 0.001 + i) * 0.15; });
+//         renderer.render(scene, camera);
+//     };
+//     animate();
+
+//     window.addEventListener('resize', () => {
+//         camera.aspect = canvas.clientWidth / canvas.clientHeight;
+//         camera.updateProjectionMatrix();
+//         renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+//     });
+// }
+
+// === 3D SKILLS CAROUSEL ===
+// function initSkillsCarousel() {
+//     const canvas = document.getElementById('skills-canvas');
+//     if(!canvas) return;
+    
+//     const skills = [
+//         { title: "HTML", color: "#E44D26", img: "https://upload.wikimedia.org/wikipedia/commons/6/61/HTML5_logo_and_wordmark.svg" },
+//         { title: "CSS", color: "#2965F1", img: "https://upload.wikimedia.org/wikipedia/commons/d/d5/CSS3_logo_and_wordmark.svg" },
+//         { title: "JavaScript", color: "#F7DF1E", img: "https://upload.wikimedia.org/wikipedia/commons/9/99/Unofficial_JavaScript_logo_2.svg" },
+//         { title: "React", color: "#61DAFB", img: "https://upload.wikimedia.org/wikipedia/commons/a/a7/React-icon.svg" },
+
+//         { title: "Node.js", color: "#68A063", img: "https://upload.wikimedia.org/wikipedia/commons/d/d9/Node.js_logo.svg" },
+//         { title: "MongoDB", color: "#4DB33D", img: "https://upload.wikimedia.org/wikipedia/commons/9/93/MongoDB_Logo.svg" }
+//     ];
+
+//     const scene = new THREE.Scene();
+//     const camera = new THREE.PerspectiveCamera(50, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
+//     camera.position.z = 7;
+//     const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+//     renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+//     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+//     // Strong ambient light so logos are always visible
+//     scene.add(new THREE.AmbientLight(0xffffff, 1.2));
+
+//     // Two point lights for even coverage
+//     const light1 = new THREE.PointLight(0x00d4ff, 1.5, 20);
+//     light1.position.set(5, 5, 5);
+//     scene.add(light1);
+
+//     const light2 = new THREE.PointLight(0x8b5cf6, 1, 20);
+//     light2.position.set(-5, -3, 5);
+//     scene.add(light2);
+
+//     const carousel = new THREE.Group();
+//     scene.add(carousel);
+//     const cardGroups = [];
+//     const radius = 3.2;
+//     const loader = new THREE.TextureLoader();
+//     const cardWidth = 2.8;
+//     const cardHeight = 3.2;
+
+//     skills.forEach((skill, i) => {
+//         const angle = (i / skills.length) * Math.PI * 2;
+//         const group = new THREE.Group();
+
+//         // Solid dark background panel so logos are visible
+//         const bgGeo = new THREE.PlaneGeometry(cardWidth, cardHeight);
+//         const bgMat = new THREE.MeshStandardMaterial({
+//             color: 0x15192a,
+//             roughness: 0.4,
+//             metalness: 0.1,
+//             transparent: true,
+//             opacity: 0.95
+//         });
+//         const bgMesh = new THREE.Mesh(bgGeo, bgMat);
+//         bgMesh.position.z = -0.02;
+//         group.add(bgMesh);
+
+//         // Accent border frame using edges
+//         const borderGeo = new THREE.EdgesGeometry(new THREE.PlaneGeometry(cardWidth + 0.08, cardHeight + 0.08));
+//         const borderMat = new THREE.LineBasicMaterial({ color: new THREE.Color(skill.color), transparent: true, opacity: 0.7 });
+//         const borderLine = new THREE.LineSegments(borderGeo, borderMat);
+//         borderLine.position.z = -0.01;
+//         group.add(borderLine);
+
+//         // Bottom color accent bar
+//         const barGeo = new THREE.PlaneGeometry(cardWidth, 0.06);
+//         const barMat = new THREE.MeshBasicMaterial({ color: new THREE.Color(skill.color) });
+//         const barMesh = new THREE.Mesh(barGeo, barMat);
+//         barMesh.position.set(0, -cardHeight / 2 + 0.03, 0.01);
+//         group.add(barMesh);
+
+//         // Skill logo image
+//         loader.load(skill.img, (tex) => {
+//             tex.encoding = THREE.sRGBEncoding;
+//             // Maintain aspect ratio
+//             const aspect = tex.image.width / tex.image.height;
+//             const drawW = cardWidth * 0.7;
+//             const drawH = drawW / aspect;
+//             const maxH = cardHeight * 0.55;
+//             const finalH = Math.min(drawH, maxH);
+//             const finalW = finalH * aspect;
+
+//             const imgGeo = new THREE.PlaneGeometry(finalW, finalH);
+//             const imgMat = new THREE.MeshStandardMaterial({
+//                 map: tex,
+//                 transparent: true,
+//                 roughness: 0.5,
+//                 metalness: 0.0
+//             });
+//             const imgMesh = new THREE.Mesh(imgGeo, imgMat);
+//             imgMesh.position.y = 0.25;
+//             group.add(imgMesh);
+//         });
+
+//         // Position in circle
+//         group.position.x = Math.sin(angle) * radius;
+//         group.position.z = Math.cos(angle) * radius;
+//         group.lookAt(0, 0, 0);
+//         carousel.add(group);
+//         cardGroups.push(group);
+//     });
+
+//     let currentIndex = 0;
+//     const titleEl = document.getElementById('skill-title');
+//     const dotsContainer = document.getElementById('skills-dots');
+
+//     skills.forEach((_, i) => {
+//         const dot = document.createElement('div');
+//         dot.classList.add('dot');
+//         if(i === 0) dot.classList.add('active');
+//         dot.onclick = () => goTo(i);
+//         dotsContainer.appendChild(dot);
+//     });
+//     const dots = document.querySelectorAll('.dot');
+
+//     function updateUI(i) {
+//         gsap.to('.skills-ui', { autoAlpha: 0, y: 20, duration: 0.15, onComplete: () => {
+//             titleEl.innerText = skills[i].title;
+//             titleEl.style.color = skills[i].color;
+//             gsap.to('.skills-ui', { autoAlpha: 1, y: 0, duration: 0.25 });
+//         }});
+//         dots.forEach((d, idx) => d.classList.toggle('active', idx === i));
+//     }
+
+//     function goTo(i) {
+//         if(i === currentIndex) return;
+//         currentIndex = i;
+//         const targetAngle = -(i / skills.length) * Math.PI * 2;
+//         gsap.to(carousel.rotation, { y: targetAngle, duration: 1, ease: "power2.inOut" });
+//         updateUI(i);
+//     }
+
+//     document.getElementById('skill-prev').onclick = () => goTo(currentIndex === 0 ? skills.length - 1 : currentIndex - 1);
+//     document.getElementById('skill-next').onclick = () => goTo(currentIndex === skills.length - 1 ? 0 : currentIndex + 1);
+//     updateUI(0);
+
+//     // Subtle float animation
+//     const animate = () => {
+//         requestAnimationFrame(animate);
+//         const t = Date.now() * 0.001;
+//         cardGroups.forEach((g, i) => {
+//             g.position.y = Math.sin(t + i * 1.2) * 0.12;
+//         });
+//         // Slow auto-rotate when idle
+//         carousel.rotation.y += 0.0008;
+//         renderer.render(scene, camera);
+//     };
+//     animate();
+
+//     // Stop auto-rotate when user navigates, resume after 4s
+//     let autoRotateTimer;
+//     function pauseAutoRotate() {
+//         carousel.rotation.y -= 0.0008; // undo the frame that just ran
+//         clearTimeout(autoRotateTimer);
+//         autoRotateTimer = setTimeout(() => {}, 4000);
+//     }
+//     document.getElementById('skill-prev').addEventListener('click', pauseAutoRotate);
+//     document.getElementById('skill-next').addEventListener('click', pauseAutoRotate);
+//     dots.forEach(d => d.addEventListener('click', pauseAutoRotate));
+
+//     window.addEventListener('resize', () => {
+//         camera.aspect = canvas.clientWidth / canvas.clientHeight;
+//         camera.updateProjectionMatrix();
+//         renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+//     });
+// }
+
+// === 3D SKILLS CAROUSEL ===
+function initSkillsCarousel() {
+    const canvas = document.getElementById('skills-canvas');
+    if(!canvas) return;
+    
+    const skills = [
+        { title: "HTML", color: "#E44D26", img: "https://upload.wikimedia.org/wikipedia/commons/6/61/HTML5_logo_and_wordmark.svg" },
+        { title: "CSS", color: "#2965F1", img: "https://upload.wikimedia.org/wikipedia/commons/d/d5/CSS3_logo_and_wordmark.svg" },
+        { title: "JavaScript", color: "#F7DF1E", img: "https://upload.wikimedia.org/wikipedia/commons/9/99/Unofficial_JavaScript_logo_2.svg" },
+        { title: "React", color: "#61DAFB", img: "https://upload.wikimedia.org/wikipedia/commons/a/a7/React-icon.svg" },
+        { title: "Node.js", color: "#68A063", img: "https://upload.wikimedia.org/wikipedia/commons/d/d9/Node.js_logo.svg" },
+        { title: "MongoDB", color: "#4DB33D", img: "https://upload.wikimedia.org/wikipedia/commons/9/93/MongoDB_Logo.svg" },
+        { title: "Tailwind CSS", color: "#06B6D4", img: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/tailwindcss/tailwindcss-original.svg" },
+        { title: "Git & GitHub", color: "#F05032", img: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/github/github-original.svg" },
+        { title: "VS Code", color: "#007ACC", img: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/vscode/vscode-original.svg" },
+        { title: "3D Transform", color: "#A78BFA", custom: true, icon: "3D" },
+        { title: "CSS Animation", color: "#F472B6", custom: true, icon: "CSS" }
+    ];
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(50, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
+    camera.position.z = 7;
+    const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+    renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+    scene.add(new THREE.AmbientLight(0xffffff, 1.2));
+    const light1 = new THREE.PointLight(0x00d4ff, 1.5, 20);
+    light1.position.set(5, 5, 5);
+    scene.add(light1);
+    const light2 = new THREE.PointLight(0x8b5cf6, 1, 20);
+    light2.position.set(-5, -3, 5);
+    scene.add(light2);
+
+    const carousel = new THREE.Group();
+    scene.add(carousel);
+    const cardGroups = [];
+    const radius = 4;
+    const loader = new THREE.TextureLoader();
+    const cardWidth = 2.6;
+    const cardHeight = 3;
+
+    // Helper: create canvas texture for skills without standard logos
+    function createCustomTexture(text, color) {
+        const c = document.createElement('canvas');
+        c.width = 256; c.height = 256;
+        const ctx = c.getContext('2d');
+        // Background
+        const grad = ctx.createRadialGradient(128, 128, 20, 128, 128, 128);
+        grad.addColorStop(0, color);
+        grad.addColorStop(1, '#0b0f19');
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.roundRect(10, 10, 236, 236, 24);
+        ctx.fill();
+        // Border
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.roundRect(10, 10, 236, 236, 24);
+        ctx.stroke();
+        // Decorative cube icon for 3D Transform
+        if (text === '3D') {
+            ctx.save();
+            ctx.translate(128, 100);
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 2.5;
+            // Front face
+            ctx.beginPath();
+            ctx.moveTo(-30, -20); ctx.lineTo(30, -20); ctx.lineTo(30, 30); ctx.lineTo(-30, 30); ctx.closePath();
+            ctx.stroke();
+            // Top face
+            ctx.beginPath();
+            ctx.moveTo(-30, -20); ctx.lineTo(-10, -45); ctx.lineTo(50, -45); ctx.lineTo(30, -20); ctx.closePath();
+            ctx.stroke();
+            // Right face
+            ctx.beginPath();
+            ctx.moveTo(30, -20); ctx.lineTo(50, -45); ctx.lineTo(50, 5); ctx.lineTo(30, 30); ctx.closePath();
+            ctx.stroke();
+            ctx.restore();
+        }
+        // Animation waves for CSS Animation
+        if (text === 'CSS') {
+            ctx.save();
+            ctx.translate(128, 100);
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 2.5;
+            for (let w = 0; w < 3; w++) {
+                ctx.beginPath();
+                ctx.globalAlpha = 1 - w * 0.25;
+                for (let x = -40; x <= 40; x++) {
+                    const y = Math.sin((x + w * 15) * 0.08) * (12 + w * 6);
+                    if (x === -40) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                }
+                ctx.stroke();
+            }
+            ctx.globalAlpha = 1;
+            ctx.restore();
+        }
+        // Text
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 28px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(text === '3D' ? '3D Transform' : 'CSS Animation', 128, 210);
+        return new THREE.CanvasTexture(c);
+    }
+
+    skills.forEach((skill, i) => {
+        const angle = (i / skills.length) * Math.PI * 2;
+        const group = new THREE.Group();
+
+        // Background panel
+        const bgGeo = new THREE.PlaneGeometry(cardWidth, cardHeight);
+        const bgMat = new THREE.MeshStandardMaterial({ color: 0x15192a, roughness: 0.4, metalness: 0.1, transparent: true, opacity: 0.95 });
+        const bgMesh = new THREE.Mesh(bgGeo, bgMat);
+        bgMesh.position.z = -0.02;
+        group.add(bgMesh);
+
+        // Accent border
+        const borderGeo = new THREE.EdgesGeometry(new THREE.PlaneGeometry(cardWidth + 0.08, cardHeight + 0.08));
+        const borderMat = new THREE.LineBasicMaterial({ color: new THREE.Color(skill.color), transparent: true, opacity: 0.7 });
+        const borderLine = new THREE.LineSegments(borderGeo, borderMat);
+        borderLine.position.z = -0.01;
+        group.add(borderLine);
+
+        // Bottom accent bar
+        const barGeo = new THREE.PlaneGeometry(cardWidth, 0.06);
+        const barMat = new THREE.MeshBasicMaterial({ color: new THREE.Color(skill.color) });
+        const barMesh = new THREE.Mesh(barGeo, barMat);
+        barMesh.position.set(0, -cardHeight / 2 + 0.03, 0.01);
+        group.add(barMesh);
+
+        // Logo image
+        function addLogoImage(texture) {
+            const aspect = texture.image ? (texture.image.width / texture.image.height) : 1;
+            const drawW = cardWidth * 0.7;
+            const drawH = drawW / aspect;
+            const maxH = cardHeight * 0.55;
+            const finalH = Math.min(drawH, maxH);
+            const finalW = finalH * aspect;
+            const imgGeo = new THREE.PlaneGeometry(finalW, finalH);
+            const imgMat = new THREE.MeshStandardMaterial({ map: texture, transparent: true, roughness: 0.5, metalness: 0.0 });
+            const imgMesh = new THREE.Mesh(imgGeo, imgMat);
+            imgMesh.position.y = 0.2;
+            group.add(imgMesh);
+        }
+
+        if (skill.custom) {
+            const tex = createCustomTexture(skill.icon, skill.color);
+            addLogoImage(tex);
+        } else {
+            loader.load(skill.img, (tex) => {
+                if (tex.encoding) tex.encoding = THREE.sRGBEncoding;
+                addLogoImage(tex);
+            });
+        }
+
+        group.position.x = Math.sin(angle) * radius;
+        group.position.z = Math.cos(angle) * radius;
+        group.lookAt(0, 0, 0);
+        carousel.add(group);
+        cardGroups.push(group);
+    });
+
+    let currentIndex = 0;
+    const titleEl = document.getElementById('skill-title');
+    const dotsContainer = document.getElementById('skills-dots');
+
+    skills.forEach((_, i) => {
+        const dot = document.createElement('div');
+        dot.classList.add('dot');
+        if(i === 0) dot.classList.add('active');
+        dot.onclick = () => goTo(i);
+        dotsContainer.appendChild(dot);
+    });
+    const dots = document.querySelectorAll('.dot');
+
+    function updateUI(i) {
+        gsap.to('.skills-ui', { autoAlpha: 0, y: 20, duration: 0.15, onComplete: () => {
+            titleEl.innerText = skills[i].title;
+            titleEl.style.color = skills[i].color;
+            gsap.to('.skills-ui', { autoAlpha: 1, y: 0, duration: 0.25 });
+        }});
+        dots.forEach((d, idx) => d.classList.toggle('active', idx === i));
+    }
+
+    function goTo(i) {
+        if(i === currentIndex) return;
+        currentIndex = i;
+        const targetAngle = -(i / skills.length) * Math.PI * 2;
+        gsap.to(carousel.rotation, { y: targetAngle, duration: 1, ease: "power2.inOut" });
+        updateUI(i);
+    }
+
+    document.getElementById('skill-prev').onclick = () => goTo(currentIndex === 0 ? skills.length - 1 : currentIndex - 1);
+    document.getElementById('skill-next').onclick = () => goTo(currentIndex === skills.length - 1 ? 0 : currentIndex + 1);
+    updateUI(0);
+
+    const animate = () => {
+        requestAnimationFrame(animate);
+        const t = Date.now() * 0.001;
+        cardGroups.forEach((g, i) => { g.position.y = Math.sin(t + i * 1.2) * 0.1; });
+        carousel.rotation.y += 0.0006;
+        renderer.render(scene, camera);
+    };
+    animate();
+
+    let autoRotateTimer;
+    function pauseAutoRotate() {
+        carousel.rotation.y -= 0.0006;
+        clearTimeout(autoRotateTimer);
+    }
+    document.getElementById('skill-prev').addEventListener('click', pauseAutoRotate);
+    document.getElementById('skill-next').addEventListener('click', pauseAutoRotate);
+    dots.forEach(d => d.addEventListener('click', pauseAutoRotate));
+
+    window.addEventListener('resize', () => {
+        camera.aspect = canvas.clientWidth / canvas.clientHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+    });
+}
+// === 3D ACHIEVEMENTS BOX ===
+function initAchievements() {
+    const box = document.getElementById('ach-box');
+    const btn = document.getElementById('open-box-btn');
+    const cardsContainer = document.getElementById('ach-cards-container');
+    let isOpen = false;
+
+    btn.addEventListener('click', () => {
+        if (!isOpen) {
+            box.classList.add('open');
+            btn.style.display = 'none';
+            setTimeout(() => {
+                cardsContainer.style.display = 'grid';
+                gsap.from('.ach-card', { y: 50, opacity: 0, stagger: 0.2, duration: 0.8, ease: "back.out(1.7)" });
+            }, 800);
+            isOpen = true;
+        }
+    });
+}
+
+// === CONTACT FORM ===
+function initContactForm() {
+    document.getElementById('contact-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const btn = e.target.querySelector('button');
+        const originalText = btn.innerHTML;
+        btn.innerHTML = 'Message Sent! <i class="fas fa-check"></i>';
+        btn.style.background = '#10b981';
+        setTimeout(() => { btn.innerHTML = originalText; btn.style.background = ''; e.target.reset(); }, 3000);
+    });
+}
