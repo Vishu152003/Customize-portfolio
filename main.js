@@ -510,267 +510,6 @@ function initDashboard() {
 }
 
 // === 3D SKILLS CAROUSEL ===
-// function initSkillsCarousel() {
-//     const canvas = document.getElementById('skills-canvas');
-//     if(!canvas) return;
-    
-//     const skills = [
-//         { title: "HTML", img: "https://upload.wikimedia.org/wikipedia/commons/6/61/HTML5_logo_and_wordmark.svg" },
-//         { title: "CSS", img: "https://upload.wikimedia.org/wikipedia/commons/d/d5/CSS3_logo_and_wordmark.svg" },
-//         { title: "JavaScript", img: "https://upload.wikimedia.org/wikipedia/commons/9/99/Unofficial_JavaScript_logo_2.svg" },
-//         { title: "React", img: "https://upload.wikimedia.org/wikipedia/commons/a/a7/React-icon.svg" },
-//         { title: "Node.js", img: "https://upload.wikimedia.org/wikipedia/commons/d/d9/Node.js_logo.svg" },
-//         { title: "MongoDB", img: "https://upload.wikimedia.org/wikipedia/commons/9/93/MongoDB_Logo.svg" }
-//     ];
-
-//     const scene = new THREE.Scene();
-//     const camera = new THREE.PerspectiveCamera(45, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
-//     camera.position.z = 10;
-//     const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
-//     renderer.setSize(canvas.clientWidth, canvas.clientHeight);
-
-//     scene.add(new THREE.AmbientLight(0xffffff, 0.8));
-//     const spotLight = new THREE.SpotLight(0x00d4ff, 2);
-//     spotLight.position.set(5, 10, 10);
-//     scene.add(spotLight);
-
-//     const carousel = new THREE.Group();
-//     scene.add(carousel);
-//     const cards = [];
-//     const radius = 4;
-//     const loader = new THREE.TextureLoader();
-
-//     skills.forEach((skill, i) => {
-//         const angle = (i / skills.length) * Math.PI * 2;
-//         const geo = new THREE.BoxGeometry(2.5, 3, 0.1);
-//         loader.load(skill.img, (tex) => {
-//             const mat = new THREE.MeshStandardMaterial({ map: tex, transparent: true, roughness: 0.3, metalness: 0.2 });
-//             const mesh = new THREE.Mesh(geo, mat);
-//             mesh.position.x = Math.sin(angle) * radius;
-//             mesh.position.z = Math.cos(angle) * radius;
-//             mesh.lookAt(0, 0, 0);
-//             carousel.add(mesh);
-//             cards.push(mesh);
-//         });
-//     });
-
-//     let currentIndex = 0;
-//     const titleEl = document.getElementById('skill-title');
-//     const dotsContainer = document.getElementById('skills-dots');
-
-//     skills.forEach((_, i) => {
-//         const dot = document.createElement('div');
-//         dot.classList.add('dot');
-//         if(i === 0) dot.classList.add('active');
-//         dot.onclick = () => goTo(i);
-//         dotsContainer.appendChild(dot);
-//     });
-//     const dots = document.querySelectorAll('.dot');
-
-//     function updateUI(i) {
-//         gsap.to('.skills-ui', { autoAlpha: 0, y: 20, duration: 0.2, onComplete: () => {
-//             titleEl.innerText = skills[i].title;
-//             gsap.to('.skills-ui', { autoAlpha: 1, y: 0, duration: 0.3 });
-//         }});
-//         dots.forEach((d, idx) => d.classList.toggle('active', idx === i));
-//     }
-
-//     function goTo(i) {
-//         if(i === currentIndex) return;
-//         currentIndex = i;
-//         const targetAngle = -(i / skills.length) * Math.PI * 2;
-//         gsap.to(carousel.rotation, { y: targetAngle, duration: 1.2, ease: "power2.inOut" });
-//         updateUI(i);
-//     }
-
-//     document.getElementById('skill-prev').onclick = () => goTo(currentIndex === 0 ? skills.length - 1 : currentIndex - 1);
-//     document.getElementById('skill-next').onclick = () => goTo(currentIndex === skills.length - 1 ? 0 : currentIndex + 1);
-//     updateUI(0);
-
-//     const animate = () => {
-//         requestAnimationFrame(animate);
-//         cards.forEach((c, i) => { if(c) c.position.y = Math.sin(Date.now() * 0.001 + i) * 0.15; });
-//         renderer.render(scene, camera);
-//     };
-//     animate();
-
-//     window.addEventListener('resize', () => {
-//         camera.aspect = canvas.clientWidth / canvas.clientHeight;
-//         camera.updateProjectionMatrix();
-//         renderer.setSize(canvas.clientWidth, canvas.clientHeight);
-//     });
-// }
-
-// === 3D SKILLS CAROUSEL ===
-// function initSkillsCarousel() {
-//     const canvas = document.getElementById('skills-canvas');
-//     if(!canvas) return;
-    
-//     const skills = [
-//         { title: "HTML", color: "#E44D26", img: "https://upload.wikimedia.org/wikipedia/commons/6/61/HTML5_logo_and_wordmark.svg" },
-//         { title: "CSS", color: "#2965F1", img: "https://upload.wikimedia.org/wikipedia/commons/d/d5/CSS3_logo_and_wordmark.svg" },
-//         { title: "JavaScript", color: "#F7DF1E", img: "https://upload.wikimedia.org/wikipedia/commons/9/99/Unofficial_JavaScript_logo_2.svg" },
-//         { title: "React", color: "#61DAFB", img: "https://upload.wikimedia.org/wikipedia/commons/a/a7/React-icon.svg" },
-
-//         { title: "Node.js", color: "#68A063", img: "https://upload.wikimedia.org/wikipedia/commons/d/d9/Node.js_logo.svg" },
-//         { title: "MongoDB", color: "#4DB33D", img: "https://upload.wikimedia.org/wikipedia/commons/9/93/MongoDB_Logo.svg" }
-//     ];
-
-//     const scene = new THREE.Scene();
-//     const camera = new THREE.PerspectiveCamera(50, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
-//     camera.position.z = 7;
-//     const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
-//     renderer.setSize(canvas.clientWidth, canvas.clientHeight);
-//     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-
-//     // Strong ambient light so logos are always visible
-//     scene.add(new THREE.AmbientLight(0xffffff, 1.2));
-
-//     // Two point lights for even coverage
-//     const light1 = new THREE.PointLight(0x00d4ff, 1.5, 20);
-//     light1.position.set(5, 5, 5);
-//     scene.add(light1);
-
-//     const light2 = new THREE.PointLight(0x8b5cf6, 1, 20);
-//     light2.position.set(-5, -3, 5);
-//     scene.add(light2);
-
-//     const carousel = new THREE.Group();
-//     scene.add(carousel);
-//     const cardGroups = [];
-//     const radius = 3.2;
-//     const loader = new THREE.TextureLoader();
-//     const cardWidth = 2.8;
-//     const cardHeight = 3.2;
-
-//     skills.forEach((skill, i) => {
-//         const angle = (i / skills.length) * Math.PI * 2;
-//         const group = new THREE.Group();
-
-//         // Solid dark background panel so logos are visible
-//         const bgGeo = new THREE.PlaneGeometry(cardWidth, cardHeight);
-//         const bgMat = new THREE.MeshStandardMaterial({
-//             color: 0x15192a,
-//             roughness: 0.4,
-//             metalness: 0.1,
-//             transparent: true,
-//             opacity: 0.95
-//         });
-//         const bgMesh = new THREE.Mesh(bgGeo, bgMat);
-//         bgMesh.position.z = -0.02;
-//         group.add(bgMesh);
-
-//         // Accent border frame using edges
-//         const borderGeo = new THREE.EdgesGeometry(new THREE.PlaneGeometry(cardWidth + 0.08, cardHeight + 0.08));
-//         const borderMat = new THREE.LineBasicMaterial({ color: new THREE.Color(skill.color), transparent: true, opacity: 0.7 });
-//         const borderLine = new THREE.LineSegments(borderGeo, borderMat);
-//         borderLine.position.z = -0.01;
-//         group.add(borderLine);
-
-//         // Bottom color accent bar
-//         const barGeo = new THREE.PlaneGeometry(cardWidth, 0.06);
-//         const barMat = new THREE.MeshBasicMaterial({ color: new THREE.Color(skill.color) });
-//         const barMesh = new THREE.Mesh(barGeo, barMat);
-//         barMesh.position.set(0, -cardHeight / 2 + 0.03, 0.01);
-//         group.add(barMesh);
-
-//         // Skill logo image
-//         loader.load(skill.img, (tex) => {
-//             tex.encoding = THREE.sRGBEncoding;
-//             // Maintain aspect ratio
-//             const aspect = tex.image.width / tex.image.height;
-//             const drawW = cardWidth * 0.7;
-//             const drawH = drawW / aspect;
-//             const maxH = cardHeight * 0.55;
-//             const finalH = Math.min(drawH, maxH);
-//             const finalW = finalH * aspect;
-
-//             const imgGeo = new THREE.PlaneGeometry(finalW, finalH);
-//             const imgMat = new THREE.MeshStandardMaterial({
-//                 map: tex,
-//                 transparent: true,
-//                 roughness: 0.5,
-//                 metalness: 0.0
-//             });
-//             const imgMesh = new THREE.Mesh(imgGeo, imgMat);
-//             imgMesh.position.y = 0.25;
-//             group.add(imgMesh);
-//         });
-
-//         // Position in circle
-//         group.position.x = Math.sin(angle) * radius;
-//         group.position.z = Math.cos(angle) * radius;
-//         group.lookAt(0, 0, 0);
-//         carousel.add(group);
-//         cardGroups.push(group);
-//     });
-
-//     let currentIndex = 0;
-//     const titleEl = document.getElementById('skill-title');
-//     const dotsContainer = document.getElementById('skills-dots');
-
-//     skills.forEach((_, i) => {
-//         const dot = document.createElement('div');
-//         dot.classList.add('dot');
-//         if(i === 0) dot.classList.add('active');
-//         dot.onclick = () => goTo(i);
-//         dotsContainer.appendChild(dot);
-//     });
-//     const dots = document.querySelectorAll('.dot');
-
-//     function updateUI(i) {
-//         gsap.to('.skills-ui', { autoAlpha: 0, y: 20, duration: 0.15, onComplete: () => {
-//             titleEl.innerText = skills[i].title;
-//             titleEl.style.color = skills[i].color;
-//             gsap.to('.skills-ui', { autoAlpha: 1, y: 0, duration: 0.25 });
-//         }});
-//         dots.forEach((d, idx) => d.classList.toggle('active', idx === i));
-//     }
-
-//     function goTo(i) {
-//         if(i === currentIndex) return;
-//         currentIndex = i;
-//         const targetAngle = -(i / skills.length) * Math.PI * 2;
-//         gsap.to(carousel.rotation, { y: targetAngle, duration: 1, ease: "power2.inOut" });
-//         updateUI(i);
-//     }
-
-//     document.getElementById('skill-prev').onclick = () => goTo(currentIndex === 0 ? skills.length - 1 : currentIndex - 1);
-//     document.getElementById('skill-next').onclick = () => goTo(currentIndex === skills.length - 1 ? 0 : currentIndex + 1);
-//     updateUI(0);
-
-//     // Subtle float animation
-//     const animate = () => {
-//         requestAnimationFrame(animate);
-//         const t = Date.now() * 0.001;
-//         cardGroups.forEach((g, i) => {
-//             g.position.y = Math.sin(t + i * 1.2) * 0.12;
-//         });
-//         // Slow auto-rotate when idle
-//         carousel.rotation.y += 0.0008;
-//         renderer.render(scene, camera);
-//     };
-//     animate();
-
-//     // Stop auto-rotate when user navigates, resume after 4s
-//     let autoRotateTimer;
-//     function pauseAutoRotate() {
-//         carousel.rotation.y -= 0.0008; // undo the frame that just ran
-//         clearTimeout(autoRotateTimer);
-//         autoRotateTimer = setTimeout(() => {}, 4000);
-//     }
-//     document.getElementById('skill-prev').addEventListener('click', pauseAutoRotate);
-//     document.getElementById('skill-next').addEventListener('click', pauseAutoRotate);
-//     dots.forEach(d => d.addEventListener('click', pauseAutoRotate));
-
-//     window.addEventListener('resize', () => {
-//         camera.aspect = canvas.clientWidth / canvas.clientHeight;
-//         camera.updateProjectionMatrix();
-//         renderer.setSize(canvas.clientWidth, canvas.clientHeight);
-//     });
-// }
-
-// === 3D SKILLS CAROUSEL ===
 function initSkillsCarousel() {
     const canvas = document.getElementById('skills-canvas');
     if(!canvas) return;
@@ -1015,12 +754,34 @@ function initAchievements() {
 
 // === CONTACT FORM ===
 function initContactForm() {
+    // ✅ all lowercase: e-m-a-i-l-j-s
+    emailjs.init("6YmMdjsZYwG4TCJ9Q");
+
+    const SERVICE_ID = "service_iz1mboo";
+    const TEMPLATE_ID = "template_qiwmhki";
+
     document.getElementById('contact-form').addEventListener('submit', (e) => {
         e.preventDefault();
         const btn = e.target.querySelector('button');
         const originalText = btn.innerHTML;
-        btn.innerHTML = 'Message Sent! <i class="fas fa-check"></i>';
-        btn.style.background = '#10b981';
-        setTimeout(() => { btn.innerHTML = originalText; btn.style.background = ''; e.target.reset(); }, 3000);
+
+        btn.innerHTML = 'Sending... <i class="fas fa-spinner fa-spin"></i>';
+        btn.style.pointerEvents = 'none';
+
+        // ✅ all lowercase here too
+        emailjs.sendForm(SERVICE_ID, TEMPLATE_ID, e.target)
+            .then(() => {
+                btn.innerHTML = 'Message Sent! <i class="fas fa-check"></i>';
+                btn.style.background = '#10b981';
+                setTimeout(() => { btn.innerHTML = originalText; btn.style.background = ''; e.target.reset(); }, 3000);
+            })
+            .catch(() => {
+                btn.innerHTML = 'Failed! <i class="fas fa-times"></i>';
+                btn.style.background = '#ef4444';
+                setTimeout(() => { btn.innerHTML = originalText; btn.style.background = ''; }, 3000);
+            })
+            .finally(() => {
+                btn.style.pointerEvents = '';
+            });
     });
 }
